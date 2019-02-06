@@ -11,7 +11,7 @@ app.use(cors())
 require('dotenv').config()
 
 app.get('/', controller.baseRoute)
-app.get('/api/:series', controller.checkSeries)
+app.get('/api/:date', controller.checkSeries)
 
 app.listen(port, function (){
   console.log(`Fremont Bridge Server running at ${ip} ${port}`)
