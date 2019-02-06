@@ -1,26 +1,25 @@
 let model = require('./model')
-let serverInfo = require('./serverInfo')
+let serverInfo = require('./serverInfo').serverInfo
 
 function baseRoute(req, res) {
-  console.log(req.headers)
+  console.log('server', serverInfo)
   res.json(serverInfo)
 }
 
-function checkSeries(req, res) {
-  let { date, northbound, southbound } = req.params
-
-  if(!date && !northbound && !southbound){
-    res.status(400).send({errors: "Date and/or direction parameter is required."})
-    return 
+async function checkSeries(req, res) {
+  let { direction } = req.params
+  let { start, end } = req.query
+  if (!direction) {
+    res.status(400).send({ errors: "Date and/or direction parameter is required." })
+    return
   }
 
-  model.getTrafficByDay(date)
-    .then((seriesData) => {
-      res.json(seriesData)
-    })
-    .catch((err) => {
-      res.status(400).send(err)
-    })
+  let seriesData = await model.getTrafficByDay(direction, start, end)
+  try {
+    res.json(seriesData)
+  } catch (err) {
+    res.status(400).send(err)
+  }
 }
 
 module.exports = {
