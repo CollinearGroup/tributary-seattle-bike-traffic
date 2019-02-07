@@ -3,13 +3,11 @@ let serverInfo = require('./serverInfo').serverInfo
 let latestDate = require('./app').latestDate
 
 function baseRoute(req, res) {
-  console.log('server', serverInfo)
   res.json(serverInfo)
 }
 
 async function checkSeries(req, res) {
   let { direction } = req.params
-  let { start, end } = req.query
   if (!direction) {
     res.status(400).send({ errors: "Date and/or direction parameter is required." })
     return

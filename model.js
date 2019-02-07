@@ -45,6 +45,13 @@ async function getTrafficData(direction) {
         datum[direction]
       ])
     })
+
+    response.initialDataSet = response.initialDataSet.sort((a, b) => {
+      return a[0] - b[0]
+    });
+
+    console.log(response.initialDataSet)
+
     return response
   } catch (err) {
     console.log(err)
