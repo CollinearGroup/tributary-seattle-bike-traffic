@@ -15,7 +15,7 @@ async function checkSeries(req, res) {
     return
   }
 
-  let seriesData = await model.getTrafficData(direction, start, end)
+  let seriesData = await model.getTrafficData(direction)
   try {
     res.json(seriesData)
   } catch (err) {

@@ -1,23 +1,31 @@
 const axios = require('axios')
 const baseUrl = require('./serverInfo').serverInfo.server.baseUrl
 
-async function latestData(){
-  return  axios.get('https://data.seattle.gov/resource/65db-xm6k.json?$select=max(date)')
-  .then((response) => {
-    return response.data[0].max_date
-  })
-  .catch((err) => { console.log(err) });
+async function getMaxDate() {
+  return axios.get('https://data.seattle.gov/resource/65db-xm6k.json?$select=max(date)')
+    .then((response) => {
+      return new Date(response.data[0].max_date)
+    })
+    .catch((err) => { console.log(err) });
 }
 
-async function getTrafficData(direction, start, end) {
-  let latestDate = await latestData()
+/**
+ * Makes dates appropriate for the API
+ * @param {Date} date  date to format
+ * @returns {String} ISO formatted without timezone, eg "2018-11-01T23:00:00.000" 
+ */
+function formatDate(date) {
+  let d = new Date(date)
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().replace("Z", '')
+}
 
-  let startDate = start ? new Date(start).toISOString() : new Date(latestDate).toISOString()
-  // TODO : handle default date range
-  // currently we are assuming start and end are formatted correctly e.g 2018-02-22
-  
-
-  let formattedQuery = `/?$where=date between "${start}T00:00:00.000" and "${end}T23:00:00.000"`
+async function getTrafficData(direction) {
+  let endDate = await getMaxDate()
+  let startDate = new Date(endDate)
+  startDate.setDate(startDate.getDate() - 90)
+  let formattedQuery = `/?$where=date between "${formatDate(startDate)}" and "${formatDate(endDate)}"`
+  console.log("formattedQuery", formattedQuery)
   let url = baseUrl + formattedQuery
   let response = {
     units: {
@@ -39,7 +47,7 @@ async function getTrafficData(direction, start, end) {
     })
     return response
   } catch (err) {
-   console.log(err)
+    console.log(err)
   }
 }
 
