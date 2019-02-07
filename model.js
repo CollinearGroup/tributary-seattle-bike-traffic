@@ -1,9 +1,21 @@
 const axios = require('axios')
 const baseUrl = require('./serverInfo').serverInfo.server.baseUrl
 
-async function getTrafficByDay(direction, start, end) {
-  let startDate = start ? new Date(start).toISOString() : new Date()
+async function latestData(){
+  return  axios.get('https://data.seattle.gov/resource/65db-xm6k.json?$select=max(date)')
+  .then((response) => {
+    return response.data[0].max_date
+  })
+  .catch((err) => { console.log(err) });
+}
 
+async function getTrafficData(direction, start, end) {
+  let latestDate = await latestData()
+
+  let startDate = start ? new Date(start).toISOString() : new Date(latestDate).toISOString()
+  // TODO : handle default date range
+  // currently we are assuming start and end are formatted correctly e.g 2018-02-22
+  
 
   let formattedQuery = `/?$where=date between "${start}T00:00:00.000" and "${end}T23:00:00.000"`
   let url = baseUrl + formattedQuery
@@ -16,9 +28,9 @@ async function getTrafficByDay(direction, start, end) {
     format: 'time',
     initialDataSet: []
   }
-  
+
   try {
-    let trafficData = await axios.get(`${baseUrl}`, headers = { "X-App-Token": process.env.API_KEY })
+    let trafficData = await axios.get(`${url}`, headers = { "X-App-Token": process.env.API_KEY })
     trafficData.data.forEach(datum => {
       response.initialDataSet.push([
         new Date(datum.date).getTime(),
@@ -27,12 +39,12 @@ async function getTrafficByDay(direction, start, end) {
     })
     return response
   } catch (err) {
-    res.status(400).send(err)
+   console.log(err)
   }
 }
 
 
 
 module.exports = {
-  getTrafficByDay
+  getTrafficData
 }

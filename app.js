@@ -17,11 +17,3 @@ app.get('/api/:direction', controller.checkSeries)
 app.listen(port, function () {
   console.log(`Fremont Bridge Server running at ${ip} ${port}`)
 })
-
-let latestDate 
-
-axios.get('https://data.seattle.gov/resource/65db-xm6k.json?$select=max(date)')
-  .then((response) => {
-    latestDate = response.data[0].max_date
-  })
-  .catch((err) => { console.log(err) });

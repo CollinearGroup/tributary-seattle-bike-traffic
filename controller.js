@@ -1,5 +1,6 @@
 let model = require('./model')
 let serverInfo = require('./serverInfo').serverInfo
+let latestDate = require('./app').latestDate
 
 function baseRoute(req, res) {
   console.log('server', serverInfo)
@@ -14,7 +15,7 @@ async function checkSeries(req, res) {
     return
   }
 
-  let seriesData = await model.getTrafficByDay(direction, start, end)
+  let seriesData = await model.getTrafficData(direction, start, end)
   try {
     res.json(seriesData)
   } catch (err) {
