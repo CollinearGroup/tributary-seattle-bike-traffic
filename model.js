@@ -24,8 +24,7 @@ async function getTrafficData(direction) {
   let endDate = await getMaxDate()
   let startDate = new Date(endDate)
   startDate.setDate(startDate.getDate() - 90)
-  let formattedQuery = `/?$where=date between "${formatDate(startDate)}" and "${formatDate(endDate)}"`
-  console.log("formattedQuery", formattedQuery)
+  let formattedQuery = `/?$where=date between "${formatDate(startDate)}" and "${formatDate(endDate)}"&$limit=100000`
   let url = baseUrl + formattedQuery
   let response = {
     units: {
@@ -49,8 +48,6 @@ async function getTrafficData(direction) {
     response.initialDataSet = response.initialDataSet.sort((a, b) => {
       return a[0] - b[0]
     });
-
-    console.log(response.initialDataSet)
 
     return response
   } catch (err) {
