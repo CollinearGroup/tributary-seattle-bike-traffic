@@ -10,7 +10,7 @@ const axios = require('axios')
 
 app.use(cors())
 
-// app.get('/logo', express.static(__dirname + '/logo.png'))
+app.use('/logo.png', express.static(__dirname + '/logo.png'))
 app.get('/', controller.baseRoute)
 app.get('/api/:direction', controller.checkSeries)
 
